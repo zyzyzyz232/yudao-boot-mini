@@ -15,7 +15,8 @@
         <!-- 各种 module 拓展 -->
         <module>yudao-module-system</module>
         <module>yudao-module-infra</module>
-        <module>badminton-teach</module>
+        <module>yudao-module-signin</module>
+        <module>yudao-module-teaching</module>
         <!--        <module>yudao-module-member</module>-->
 <!--        <module>yudao-module-bpm</module>-->
 <!--        <module>yudao-module-report</module>-->
