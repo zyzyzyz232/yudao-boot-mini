@@ -23,7 +23,7 @@ public interface PersonsMapper extends BaseMapperX<PersonsDO> {
                 .eqIfPresent(PersonsDO::getDepartment, reqVO.getDepartment())
                 .eqIfPresent(PersonsDO::getStatus, reqVO.getStatus())
                 .betweenIfPresent(PersonsDO::getCreateTime, reqVO.getCreateTime())
-                .orderByDesc(PersonsDO::getId));
+                .orderByDesc(PersonsDO::getPersonId));
     }
 
 }

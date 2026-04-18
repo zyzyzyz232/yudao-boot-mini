@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.signin.service.persons;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -34,18 +36,22 @@ public class PersonsServiceImpl implements PersonsService {
 
     @Override
     public String createPersons(PersonsSaveReqVO createReqVO) {
+        // 若请求中未传 personId，自动生成 UUID
+        if (StrUtil.isBlank(createReqVO.getPersonId())) {
+            createReqVO.setPersonId(IdUtil.fastSimpleUUID());
+        }
         // 插入
         PersonsDO persons = BeanUtils.toBean(createReqVO, PersonsDO.class);
         personsMapper.insert(persons);
 
         // 返回
-        return persons.getId();
+        return persons.getPersonId();
     }
 
     @Override
     public void updatePersons(PersonsSaveReqVO updateReqVO) {
         // 校验存在
-        validatePersonsExists(updateReqVO.getId());
+        validatePersonsExists(updateReqVO.getPersonId());
         // 更新
         PersonsDO updateObj = BeanUtils.toBean(updateReqVO, PersonsDO.class);
         personsMapper.updateById(updateObj);

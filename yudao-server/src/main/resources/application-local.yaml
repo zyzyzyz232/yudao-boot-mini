@@ -80,7 +80,8 @@ spring:
 
   # Redis 配置。Redisson 默认的配置足够使用，一般不需要进行调优
   redis:
-    host: 127.0.0.1 # 地址
+
+    host: 10.112.189.54 # 地址，原先是127.0.0.1
     port: 6379 # 端口
     database: 0 # 数据库索引
 #    password: dev # 密码，建议生产环境开启

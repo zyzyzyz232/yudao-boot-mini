@@ -39,13 +39,13 @@ public class FacePhotosServiceImpl implements FacePhotosService {
         facePhotosMapper.insert(facePhotos);
 
         // 返回
-        return facePhotos.getId();
+        return facePhotos.getPhotoId();
     }
 
     @Override
     public void updateFacePhotos(FacePhotosSaveReqVO updateReqVO) {
         // 校验存在
-        validateFacePhotosExists(updateReqVO.getId());
+        validateFacePhotosExists(updateReqVO.getPhotoId());
         // 更新
         FacePhotosDO updateObj = BeanUtils.toBean(updateReqVO, FacePhotosDO.class);
         facePhotosMapper.updateById(updateObj);

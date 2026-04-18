@@ -28,7 +28,7 @@ public interface FacePhotosMapper extends BaseMapperX<FacePhotosDO> {
                 .eqIfPresent(FacePhotosDO::getLivenessScore, reqVO.getLivenessScore())
                 .eqIfPresent(FacePhotosDO::getIsPrimary, reqVO.getIsPrimary())
                 .betweenIfPresent(FacePhotosDO::getCreateTime, reqVO.getCreateTime())
-                .orderByDesc(FacePhotosDO::getId));
+                .orderByDesc(FacePhotosDO::getPhotoId));
     }
 
 }
