@@ -18,16 +18,24 @@ public interface FacePhotosService {
      * 创建签到系统-人脸照片特征
      *
      * @param createReqVO 创建信息
+     * @param imageUrl    文件上传后的访问路径
+     * @param fileName    原始文件名（用于识别格式）
+     * @param sizeKb      文件大小（KB）
      * @return 编号
      */
-    String createFacePhotos(@Valid FacePhotosSaveReqVO createReqVO);
+    String createFacePhotos(@Valid FacePhotosSaveReqVO createReqVO,
+                            String imageUrl, String fileName, int sizeKb);
 
     /**
      * 更新签到系统-人脸照片特征
      *
      * @param updateReqVO 更新信息
+     * @param imageUrl    新照片的访问路径，为 null 时不更新照片
+     * @param fileName    原始文件名，为 null 时不更新
+     * @param sizeKb      文件大小（KB），为 null 时不更新
      */
-    void updateFacePhotos(@Valid FacePhotosSaveReqVO updateReqVO);
+    void updateFacePhotos(@Valid FacePhotosSaveReqVO updateReqVO,
+                          String imageUrl, String fileName, Integer sizeKb);
 
     /**
      * 删除签到系统-人脸照片特征
