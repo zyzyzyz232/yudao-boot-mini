@@ -16,5 +16,5 @@ public interface ErrorCodeConstants {
 
     // ========== 人脸照片相关 ==========
     ErrorCode FACE_PHOTOS_NOT_EXISTS = new ErrorCode(1_200_000_002, "人脸照片不存在");
-
+ErrorCode RECORD_NOT_EXISTS = new ErrorCode(1_200_000_003, "签到记录不存在");
 }
