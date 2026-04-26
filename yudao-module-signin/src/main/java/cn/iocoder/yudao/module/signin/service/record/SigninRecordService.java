@@ -59,4 +59,13 @@ public interface SigninRecordService {
      */
     PageResult<RecordDO> getRecordPage(RecordPageReqVO pageReqVO);
 
+    /**
+     * 将指定课堂、学员的签到记录标记为已签到（status=1），并写入签到时间。
+     * 若不存在对应记录则抛出业务异常。
+     *
+     * @param lessonId 课堂编号
+     * @param personId 学员编号
+     */
+    void markSignedInByLessonAndPerson(Long lessonId, String personId);
+
 }

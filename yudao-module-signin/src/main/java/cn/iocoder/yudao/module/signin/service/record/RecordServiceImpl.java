@@ -1,6 +1,5 @@
 package cn.iocoder.yudao.module.signin.service.record;
 
-import cn.hutool.core.collection.CollUtil;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -10,14 +9,13 @@ import java.util.*;
 import cn.iocoder.yudao.module.signin.controller.admin.record.vo.*;
 import cn.iocoder.yudao.module.signin.dal.dataobject.record.RecordDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.signin.dal.mysql.record.RecordMapper;
 
+import java.time.LocalDateTime;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
-import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.diffList;
 import static cn.iocoder.yudao.module.signin.enums.ErrorCodeConstants.*;
 
 /**
@@ -80,6 +78,18 @@ public class RecordServiceImpl implements SigninRecordService {
     @Override
     public PageResult<RecordDO> getRecordPage(RecordPageReqVO pageReqVO) {
         return recordMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void markSignedInByLessonAndPerson(Long lessonId, String personId) {
+        RecordDO record = recordMapper.selectByLessonIdAndPersonId(lessonId, personId);
+        if (record == null) {
+            throw exception(RECORD_NOT_EXISTS);
+        }
+        record.setStatus(1);
+        record.setSignTime(LocalDateTime.now());
+        recordMapper.updateById(record);
     }
 
 }

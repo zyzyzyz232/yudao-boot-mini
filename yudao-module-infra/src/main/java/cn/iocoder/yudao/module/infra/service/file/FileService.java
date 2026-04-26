@@ -86,4 +86,12 @@ public interface FileService {
      */
     byte[] getFileContent(Long configId, String path) throws Exception;
 
+    /**
+     * 根据访问地址获得文件内容（通过 {@code infra_file.url} 反查 configId 与 path）
+     *
+     * @param url 文件访问地址，与上传后返回的 URL 一致（可带 query）
+     * @return 文件内容
+     */
+    byte[] getFileContentByUrl(@NotEmpty(message = "文件 URL 不能为空") String url) throws Exception;
+
 }

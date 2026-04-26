@@ -261,6 +261,20 @@ yudao:
   info:
     version: 1.0.0
     base-package: cn.iocoder.yudao
+  signin:
+    face-algorithm:
+      # 人脸 Lite API 根地址（POST {baseUrl}/lite/extract、POST {baseUrl}/lite/verify）
+      base-url: http://127.0.0.1:3000
+      connect-timeout-millis: 5000
+      read-timeout-millis: 120000
+      # authorization: Bearer your-token
+    # 教学「按班级查学员」HTTP 根地址（GET {baseUrl}/teaching/class-student/list-by-class?classId=），用于人脸创建/更新/同步前校验 studentNo
+    teaching-api:
+      base-url: http://127.0.0.1:48080/admin-api
+      # list-by-class-path: /teaching/class-student/list-by-class
+      connect-timeout-millis: 5000
+      read-timeout-millis: 15000
+      # authorization: Bearer your-admin-token
   web:
     admin-ui:
       url: http://dashboard.yudao.iocoder.cn # Admin 管理后台 UI 的地址

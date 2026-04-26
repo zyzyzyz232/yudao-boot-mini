@@ -34,8 +34,9 @@ public class FacePhotosServiceImpl implements FacePhotosService {
     @Override
     public String createFacePhotos(@Valid FacePhotosSaveReqVO createReqVO,
                                    String imageUrl, String fileName, int sizeKb) {
-        // 若未传 photoId，自动生成
-        if (StrUtil.isBlank(createReqVO.getPhotoId())) {
+        if (createReqVO.getTeachingClassStudentId() != null) {
+            createReqVO.setPhotoId(String.valueOf(createReqVO.getTeachingClassStudentId()));
+        } else if (StrUtil.isBlank(createReqVO.getPhotoId())) {
             createReqVO.setPhotoId(IdUtil.fastSimpleUUID());
         }
 
@@ -83,6 +84,22 @@ public class FacePhotosServiceImpl implements FacePhotosService {
     @Override
     public FacePhotosDO getFacePhotos(String id) {
         return facePhotosMapper.selectById(id);
+    }
+
+    @Override
+    public FacePhotosDO getFacePhotoForUpdateByStudentNo(String studentNo) {
+        if (StrUtil.isBlank(studentNo)) {
+            return null;
+        }
+        return facePhotosMapper.selectForUpdateByStudentNo(StrUtil.trim(studentNo));
+    }
+
+    @Override
+    public FacePhotosDO getFacePhotoForUpdateByStudentNoAndClassId(Long classId, String studentNo) {
+        if (classId == null || StrUtil.isBlank(studentNo)) {
+            return null;
+        }
+        return facePhotosMapper.selectForUpdateByStudentNoAndClassId(classId, StrUtil.trim(studentNo));
     }
 
     @Override

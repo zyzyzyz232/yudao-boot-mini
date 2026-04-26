@@ -60,6 +60,23 @@ public interface FacePhotosService {
     FacePhotosDO getFacePhotos(String id);
 
     /**
+     * 按学员编号解析用于「仅 studentNo 更新」接口的目标记录：优先主图，否则取更新时间最新的一条
+     *
+     * @param studentNo 学员编号
+     * @return 人脸记录，不存在则返回 null
+     */
+    FacePhotosDO getFacePhotoForUpdateByStudentNo(String studentNo);
+
+    /**
+     * 按班级 + 学员编号解析用于更新的目标记录：优先主图，否则取更新时间最新的一条
+     *
+     * @param classId   班级编号
+     * @param studentNo 学员编号
+     * @return 人脸记录，不存在则返回 null
+     */
+    FacePhotosDO getFacePhotoForUpdateByStudentNoAndClassId(Long classId, String studentNo);
+
+    /**
      * 获得签到系统-人脸照片特征分页
      *
      * @param pageReqVO 分页查询

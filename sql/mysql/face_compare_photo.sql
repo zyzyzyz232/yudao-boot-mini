@@ -25,8 +25,9 @@ CREATE TABLE `signin_persons` (
 -- 2. 创建签到人脸照片与特征数据表
 -- ==========================================
 CREATE TABLE `signin_face_photos` (
-    `photo_id` VARCHAR(50) NOT NULL COMMENT '照片唯一标识(可使用UUID)',
-    `person_id` VARCHAR(50) NOT NULL COMMENT '关联的人员ID',
+    `id` VARCHAR(50) NOT NULL COMMENT '主键；可与 teaching_class_student.id 同值（逻辑关联，VARCHAR 存数字串）；未绑定时仍可用 UUID',
+    `student_no` VARCHAR(50) NOT NULL COMMENT '学员编号',
+    `class_id` bigint DEFAULT NULL COMMENT '班级编号（同一学员多班级时区分底库）',
     
     -- 图像存储信息
     `image_url` VARCHAR(500) NOT NULL COMMENT '照片在对象存储(OSS/S3)中的访问路径',
@@ -40,6 +41,8 @@ CREATE TABLE `signin_face_photos` (
     
     -- 业务逻辑字段
     `is_primary` TINYINT(1) DEFAULT 0 COMMENT '是否为主照片(1-是, 0-否)',
+    `name` varchar(100) DEFAULT NULL COMMENT '姓名',
+    `status` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '状态：1-正常, 0-禁用',
     
     -- ▼▼▼ 芋道(Yudao)框架要求的基础通用字段 ▼▼▼
     `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '创建者',
@@ -50,6 +53,7 @@ CREATE TABLE `signin_face_photos` (
     `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
     -- ▲▲▲ 芋道(Yudao)框架要求的基础通用字段 ▲▲▲
     
-    PRIMARY KEY (`photo_id`),
-    INDEX `idx_person_id` (`person_id`)
+    PRIMARY KEY (`id`),
+    INDEX `idx_student_no` (`student_no`),
+    KEY `idx_signin_face_photos_class_student` (`class_id`, `student_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='签到系统-人脸照片特征表';

@@ -14,8 +14,11 @@ import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_
 @Data
 public class FacePhotosPageReqVO extends PageParam {
 
-    @Schema(description = "关联的人员ID", example = "9210")
-    private String personId;
+    @Schema(description = "学员编号", example = "9210")
+    private String studentNo;
+
+    @Schema(description = "班级编号")
+    private Long classId;
 
     @Schema(description = "照片在对象存储(OSS/S3)中的访问路径", example = "https://www.iocoder.cn")
     private String imageUrl;
@@ -37,6 +40,12 @@ public class FacePhotosPageReqVO extends PageParam {
 
     @Schema(description = "是否为主照片(1-是, 0-否)")
     private Boolean isPrimary;
+
+    @Schema(description = "姓名")
+    private String name;
+
+    @Schema(description = "状态：1-正常, 0-禁用")
+    private Boolean status;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

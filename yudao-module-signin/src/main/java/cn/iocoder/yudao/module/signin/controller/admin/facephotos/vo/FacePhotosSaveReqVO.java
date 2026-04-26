@@ -10,12 +10,18 @@ import java.math.BigDecimal;
 @Data
 public class FacePhotosSaveReqVO {
 
-    @Schema(description = "照片唯一标识(可使用UUID)，不传则自动生成", example = "5574")
+    @Schema(description = "照片主键 id；不传时若传了 teachingClassStudentId 则使用其字符串形式，否则自动生成 UUID。与 teaching_class_student.id 绑定时应与此一致", example = "5574")
     private String photoId;
 
-    @Schema(description = "关联的人员ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "9210")
-    @NotEmpty(message = "关联的人员ID不能为空")
-    private String personId;
+    @Schema(description = "教学班级学员主键，与表 teaching_class_student.id 一致；传则作为 photoId/表 id 使用（与 photoId 同时传时以此为准）", example = "1001")
+    private Long teachingClassStudentId;
+
+    @Schema(description = "学员编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "9210")
+    @NotEmpty(message = "学员编号不能为空")
+    private String studentNo;
+
+    @Schema(description = "班级编号", example = "100")
+    private Long classId;
 
     @Schema(description = "人脸特征向量数据(通常是一组浮点数数组)")
     private String faceVector;
@@ -28,5 +34,8 @@ public class FacePhotosSaveReqVO {
 
     @Schema(description = "是否为主照片(1-是, 0-否)")
     private Boolean isPrimary;
+
+    @Schema(description = "姓名")
+    private String name;
 
 }

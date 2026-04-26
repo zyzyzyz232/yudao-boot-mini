@@ -59,4 +59,27 @@ public interface PersonsService {
      */
     PageResult<PersonsDO> getPersonsPage(PersonsPageReqVO pageReqVO);
 
+    /**
+     * 将人员状态置为已激活（正常）
+     *
+     * @param personId 人员编号
+     */
+    void activatePerson(String personId);
+
+    /**
+     * 将人员状态置为已激活，并同步姓名（姓名非空时）
+     *
+     * @param personId 人员编号
+     * @param name       姓名
+     */
+    void activatePerson(String personId, String name);
+
+    /**
+     * 人脸同步等场景：人员不存在则按 personId（通常即学号）创建并激活；已存在则激活并可选更新姓名。
+     *
+     * @param personId 人员编号
+     * @param name     可选；为空时用 personId 作为姓名占位
+     */
+    void ensurePersonAndActivate(String personId, String name);
+
 }

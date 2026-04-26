@@ -1,21 +1,34 @@
 package cn.iocoder.yudao.module.signin.dal.dataobject.facephotos;
 
-import lombok.*;
-import java.util.*;
-import java.math.BigDecimal;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+import cn.iocoder.yudao.framework.tenant.core.aop.TenantIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.math.BigDecimal;
 
 /**
  * 签到系统-人脸照片特征 DO
+ * <p>
+ * 继承 {@link BaseDO}，使用 {@code deleted} 字段做逻辑删除（与芋道默认一致）。
+ * 主键列名为 {@code id}，Java 属性为 {@code photoId}；可与 {@code teaching_class_student.id} 同值（逻辑关联）。
+ * <p>
+ * 标记 {@link TenantIgnore}：表含 {@code tenant_id} 且脚本默认 0 时，若实体未纳入租户字段填充，
+ * MyBatis 租户插件仍会拼接当前登录租户，导致与库中 0 不一致而查无数据。
  *
  * @author 芋道源码
  */
+@TenantIgnore
 @TableName("signin_face_photos")
-@KeySequence("signin_face_photos_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
+@KeySequence("signin_face_photos_seq")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -25,14 +38,18 @@ import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 public class FacePhotosDO extends BaseDO {
 
     /**
-     * 照片唯一标识(可使用UUID)
+     * 表主键列 {@code id}；可为 UUID，或与教学侧 {@code teaching_class_student.id} 同值（逻辑外键，常见为数字字符串）
      */
-    @TableId(type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.INPUT)
     private String photoId;
     /**
-     * 关联的人员ID
+     * 学员编号（表字段 student_no）
      */
-    private String personId;
+    private String studentNo;
+    /**
+     * 班级编号（同一学员多班级时区分底库）
+     */
+    private Long classId;
     /**
      * 照片在对象存储(OSS/S3)中的访问路径
      */
@@ -61,6 +78,13 @@ public class FacePhotosDO extends BaseDO {
      * 是否为主照片(1-是, 0-否)
      */
     private Boolean isPrimary;
+    /**
+     * 姓名
+     */
+    private String name;
+    /**
+     * 状态：1-正常, 0-禁用（表字段 status）
+     */
+    private Boolean status;
 
-
-}
+}

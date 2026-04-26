@@ -17,9 +17,13 @@ public class FacePhotosRespVO {
     @ExcelProperty("照片唯一标识(可使用UUID)")
     private String photoId;
 
-    @Schema(description = "关联的人员ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "9210")
-    @ExcelProperty("关联的人员ID")
-    private String personId;
+    @Schema(description = "学员编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "9210")
+    @ExcelProperty("学员编号")
+    private String studentNo;
+
+    @Schema(description = "班级编号")
+    @ExcelProperty("班级编号")
+    private Long classId;
 
     @Schema(description = "照片在对象存储(OSS/S3)中的访问路径", requiredMode = Schema.RequiredMode.REQUIRED, example = "https://www.iocoder.cn")
     @ExcelProperty("照片在对象存储(OSS/S3)中的访问路径")
@@ -49,8 +53,16 @@ public class FacePhotosRespVO {
     @ExcelProperty("是否为主照片(1-是, 0-否)")
     private Boolean isPrimary;
 
+    @Schema(description = "姓名")
+    @ExcelProperty("姓名")
+    private String name;
+
+    @Schema(description = "状态：1-正常, 0-禁用")
+    @ExcelProperty("状态")
+    private Boolean status;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
-}
+}

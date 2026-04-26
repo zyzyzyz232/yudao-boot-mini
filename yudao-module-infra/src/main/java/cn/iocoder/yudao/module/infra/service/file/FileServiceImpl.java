@@ -203,4 +203,33 @@ public class FileServiceImpl implements FileService {
         return client.getContent(path);
     }
 
+    @Override
+    @SneakyThrows
+    public byte[] getFileContentByUrl(String url) {
+        FileDO file = findFileByAccessUrl(url);
+        if (file == null) {
+            throw exception(FILE_NOT_EXISTS);
+        }
+        return getFileContent(file.getConfigId(), file.getPath());
+    }
+
+    /**
+     * 按访问 URL 查找文件记录：先精确匹配，再尝试去掉 query 后匹配（兼容预签名与无参 URL）
+     */
+    private FileDO findFileByAccessUrl(String url) {
+        if (StrUtil.isBlank(url)) {
+            return null;
+        }
+        String trimmed = url.trim();
+        FileDO file = fileMapper.selectOne(FileDO::getUrl, trimmed);
+        if (file != null) {
+            return file;
+        }
+        String withoutQuery = HttpUtils.removeUrlQuery(trimmed);
+        if (!StrUtil.equals(trimmed, withoutQuery)) {
+            file = fileMapper.selectOne(FileDO::getUrl, withoutQuery);
+        }
+        return file;
+    }
+
 }

@@ -3,7 +3,6 @@ package cn.iocoder.yudao.module.signin.controller.admin.persons;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,14 +39,12 @@ public class PersonsController {
 
     @PostMapping("/create")
     @Operation(summary = "创建签到系统-人员基本信息")
-    @PreAuthorize("@ss.hasPermission('signin:persons:create')")
     public CommonResult<String> createPersons(@Valid @RequestBody PersonsSaveReqVO createReqVO) {
         return success(personsService.createPersons(createReqVO));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新签到系统-人员基本信息")
-    @PreAuthorize("@ss.hasPermission('signin:persons:update')")
     public CommonResult<Boolean> updatePersons(@Valid @RequestBody PersonsSaveReqVO updateReqVO) {
         personsService.updatePersons(updateReqVO);
         return success(true);
@@ -56,7 +53,6 @@ public class PersonsController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除签到系统-人员基本信息")
     @Parameter(name = "id", description = "编号", required = true)
-    @PreAuthorize("@ss.hasPermission('signin:persons:delete')")
     public CommonResult<Boolean> deletePersons(@RequestParam("id") String id) {
         personsService.deletePersons(id);
         return success(true);
@@ -65,7 +61,6 @@ public class PersonsController {
     @DeleteMapping("/delete-list")
     @Parameter(name = "ids", description = "编号", required = true)
     @Operation(summary = "批量删除签到系统-人员基本信息")
-                @PreAuthorize("@ss.hasPermission('signin:persons:delete')")
     public CommonResult<Boolean> deletePersonsList(@RequestParam("ids") List<String> ids) {
         personsService.deletePersonsListByIds(ids);
         return success(true);
@@ -74,7 +69,6 @@ public class PersonsController {
     @GetMapping("/get")
     @Operation(summary = "获得签到系统-人员基本信息")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('signin:persons:query')")
     public CommonResult<PersonsRespVO> getPersons(@RequestParam("id") String id) {
         PersonsDO persons = personsService.getPersons(id);
         return success(BeanUtils.toBean(persons, PersonsRespVO.class));
@@ -82,7 +76,6 @@ public class PersonsController {
 
     @GetMapping("/page")
     @Operation(summary = "获得签到系统-人员基本信息分页")
-    @PreAuthorize("@ss.hasPermission('signin:persons:query')")
     public CommonResult<PageResult<PersonsRespVO>> getPersonsPage(@Valid PersonsPageReqVO pageReqVO) {
         PageResult<PersonsDO> pageResult = personsService.getPersonsPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, PersonsRespVO.class));
@@ -90,7 +83,6 @@ public class PersonsController {
 
     @GetMapping("/export-excel")
     @Operation(summary = "导出签到系统-人员基本信息 Excel")
-    @PreAuthorize("@ss.hasPermission('signin:persons:export')")
     @ApiAccessLog(operateType = EXPORT)
     public void exportPersonsExcel(@Valid PersonsPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
