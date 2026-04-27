@@ -21,7 +21,7 @@ public class FacePhotosRespVO {
     @ExcelProperty("学员编号")
     private String studentNo;
 
-    @Schema(description = "班级编号")
+    @Schema(description = "班级编号", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("班级编号")
     private Long classId;
 

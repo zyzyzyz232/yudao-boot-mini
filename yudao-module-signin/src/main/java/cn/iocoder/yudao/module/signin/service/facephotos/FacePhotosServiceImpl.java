@@ -1,8 +1,8 @@
 package cn.iocoder.yudao.module.signin.service.facephotos;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.signin.controller.admin.facephotos.vo.FacePhotosPageReqVO;
@@ -37,13 +37,14 @@ public class FacePhotosServiceImpl implements FacePhotosService {
         if (createReqVO.getTeachingClassStudentId() != null) {
             createReqVO.setPhotoId(String.valueOf(createReqVO.getTeachingClassStudentId()));
         } else if (StrUtil.isBlank(createReqVO.getPhotoId())) {
-            createReqVO.setPhotoId(IdUtil.fastSimpleUUID());
+            // 使用雪花数字串：兼容库表 id 为 BIGINT；若为 VARCHAR 亦可存
+            createReqVO.setPhotoId(IdWorker.getIdStr());
         }
 
         // 组装 DO，imageUrl 由 Controller 通过 FileService 上传后传入
         FacePhotosDO facePhotos = BeanUtils.toBean(createReqVO, FacePhotosDO.class);
-        facePhotos.setImageUrl(imageUrl);
-        facePhotos.setImageFormat(FileUtil.extName(fileName));
+        facePhotos.setImageUrl(StrUtil.nullToEmpty(imageUrl));
+        facePhotos.setImageFormat(FileUtil.extName(StrUtil.nullToEmpty(fileName)));
         facePhotos.setImageSizeKb(sizeKb);
         facePhotosMapper.insert(facePhotos);
 

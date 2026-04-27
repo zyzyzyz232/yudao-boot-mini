@@ -8,16 +8,21 @@ import java.math.BigDecimal;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
 
 @Schema(description = "管理后台 - 签到系统-人脸照片特征分页 Request VO")
 @Data
 public class FacePhotosPageReqVO extends PageParam {
 
-    @Schema(description = "学员编号", example = "9210")
+    @Schema(description = "学员编号（与 signin_face_photos.student_no 一致）", requiredMode = Schema.RequiredMode.REQUIRED, example = "9210")
+    @NotEmpty(message = "学员编号不能为空")
     private String studentNo;
 
-    @Schema(description = "班级编号")
+    @Schema(description = "班级编号（与 signin_face_photos.class_id 一致）", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
+    @NotNull(message = "班级编号不能为空")
     private Long classId;
 
     @Schema(description = "照片在对象存储(OSS/S3)中的访问路径", example = "https://www.iocoder.cn")

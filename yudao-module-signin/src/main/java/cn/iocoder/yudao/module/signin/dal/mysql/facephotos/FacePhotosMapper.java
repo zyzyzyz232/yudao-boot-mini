@@ -17,8 +17,8 @@ public interface FacePhotosMapper extends BaseMapperX<FacePhotosDO> {
 
     default PageResult<FacePhotosDO> selectPage(FacePhotosPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<FacePhotosDO>()
-                .eqIfPresent(FacePhotosDO::getStudentNo, reqVO.getStudentNo())
-                .eqIfPresent(FacePhotosDO::getClassId, reqVO.getClassId())
+                .eq(FacePhotosDO::getStudentNo, reqVO.getStudentNo())
+                .eq(FacePhotosDO::getClassId, reqVO.getClassId())
                 .eqIfPresent(FacePhotosDO::getImageUrl, reqVO.getImageUrl())
                 .eqIfPresent(FacePhotosDO::getImageFormat, reqVO.getImageFormat())
                 .eqIfPresent(FacePhotosDO::getImageSizeKb, reqVO.getImageSizeKb())

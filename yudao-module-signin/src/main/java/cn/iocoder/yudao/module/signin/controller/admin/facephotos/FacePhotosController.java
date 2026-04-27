@@ -53,12 +53,12 @@ public class FacePhotosController {
 
 
     @PostMapping(value = "/sync-feature", consumes = "multipart/form-data")
-    @Operation(summary = "同步人脸特征（上传照片、调算法、写特征、激活人员）",
-            description = "数据仅存 signin_face_photos：按 classId+studentNo upsert；name、teachingClassStudentId 可选")
+    @Operation(summary = "同步人脸特征（上传照片、调算法、写特征）",
+            description = "数据仅存 signin_face_photos。必填：studentNo、classId、file；按 classId+studentNo upsert。name、photoId 等可选。teachingClassStudentId（班级学员关联 ID）选传，仅用于主键 id 与业务表对齐，不参与必填校验")
     @Parameter(name = "file", description = "照片文件", required = true,
             schema = @Schema(type = "string", format = "binary"))
     public CommonResult<FacePhotoSyncFeatureRespVO> syncFaceFeature(
-            @RequestParam("studentNo") @NotNull(message = "学员编号不能为空") String studentNo,
+            @RequestParam("studentNo") @NotEmpty(message = "学员编号不能为空") String studentNo,
             @RequestParam("classId") @NotNull(message = "班级编号不能为空") Long classId,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "photoId", required = false) String photoId,
@@ -70,11 +70,12 @@ public class FacePhotosController {
     }
 
     @PostMapping(value = "/create", consumes = "multipart/form-data")
-    @Operation(summary = "创建签到系统-人脸照片特征")
-    @Parameter(name = "file", description = "照片文件", required = true,
+    @Operation(summary = "创建签到系统-人脸照片特征",
+            description = "必填：studentNo、classId。file 选传；不传时不走 OSS，image_url 置空串、image_size_kb 为 0，可仅写入 faceVector 等字段。teachingClassStudentId 选传，仅用于将表主键 id 与班级学员关联表对齐")
+    @Parameter(name = "file", description = "照片文件（选传）",
             schema = @Schema(type = "string", format = "binary"))
     public CommonResult<String> createFacePhotos(
-            @RequestParam("studentNo") @NotNull(message = "学员编号不能为空") String studentNo,
+            @RequestParam("studentNo") @NotEmpty(message = "学员编号不能为空") String studentNo,
             @RequestParam("classId") @NotNull(message = "班级编号不能为空") Long classId,
             @RequestParam(value = "photoId", required = false) String photoId,
             @RequestParam(value = "teachingClassStudentId", required = false) Long teachingClassStudentId,
@@ -83,10 +84,21 @@ public class FacePhotosController {
             @RequestParam(value = "qualityScore", required = false) java.math.BigDecimal qualityScore,
             @RequestParam(value = "livenessScore", required = false) java.math.BigDecimal livenessScore,
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam("file") @NotNull(message = "照片文件不能为空") MultipartFile file) throws Exception {
-        byte[] content = IoUtil.readBytes(file.getInputStream());
-        String imageUrl = fileService.createFile(content, file.getOriginalFilename(),
-                "signin/face-photos", file.getContentType());
+            @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
+        String imageUrl;
+        String fileName;
+        int sizeKb;
+        if (file != null && !file.isEmpty()) {
+            byte[] content = IoUtil.readBytes(file.getInputStream());
+            imageUrl = fileService.createFile(content, file.getOriginalFilename(),
+                    "signin/face-photos", file.getContentType());
+            fileName = file.getOriginalFilename();
+            sizeKb = (int) (file.getSize() / 1024);
+        } else {
+            imageUrl = "";
+            fileName = "";
+            sizeKb = 0;
+        }
         FacePhotosSaveReqVO createReqVO = new FacePhotosSaveReqVO();
         createReqVO.setStudentNo(studentNo);
         createReqVO.setClassId(classId);
@@ -97,8 +109,7 @@ public class FacePhotosController {
         createReqVO.setQualityScore(qualityScore);
         createReqVO.setLivenessScore(livenessScore);
         createReqVO.setName(name);
-        return success(facePhotosService.createFacePhotos(createReqVO, imageUrl,
-                file.getOriginalFilename(), (int) (file.getSize() / 1024)));
+        return success(facePhotosService.createFacePhotos(createReqVO, imageUrl, fileName, sizeKb));
     }
 
     @PutMapping(value = "/update", consumes = "multipart/form-data")
@@ -183,14 +194,16 @@ public class FacePhotosController {
     }
 
     @GetMapping("/page")
-    @Operation(summary = "获得签到系统-人脸照片特征分页")
+    @Operation(summary = "获得签到系统-人脸照片特征分页",
+            description = "查询条件必填：studentNo、classId（与 signin_face_photos 结构一致）；其余筛选可选")
     public CommonResult<PageResult<FacePhotosRespVO>> getFacePhotosPage(@Valid FacePhotosPageReqVO pageReqVO) {
         PageResult<FacePhotosDO> pageResult = facePhotosService.getFacePhotosPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, FacePhotosRespVO.class));
     }
 
     @GetMapping("/export-excel")
-    @Operation(summary = "导出签到系统-人脸照片特征 Excel")
+    @Operation(summary = "导出签到系统-人脸照片特征 Excel",
+            description = "查询条件必填：studentNo、classId，与分页接口一致")
     @ApiAccessLog(operateType = EXPORT)
     public void exportFacePhotosExcel(@Valid FacePhotosPageReqVO pageReqVO,
                                       HttpServletResponse response) throws IOException {

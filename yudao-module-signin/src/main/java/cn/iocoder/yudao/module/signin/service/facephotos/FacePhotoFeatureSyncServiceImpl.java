@@ -7,7 +7,6 @@ import cn.iocoder.yudao.module.infra.service.file.FileService;
 import cn.iocoder.yudao.module.signin.controller.admin.facephotos.vo.FacePhotosSaveReqVO;
 import cn.iocoder.yudao.module.signin.dal.dataobject.facephotos.FacePhotosDO;
 import cn.iocoder.yudao.module.signin.framework.facealgorithm.FaceFeatureExtractClient;
-import cn.iocoder.yudao.module.signin.service.persons.PersonsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,8 +37,6 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
         ALLOWED_IMAGE_TYPES = Collections.unmodifiableSet(s);
     }
 
-    @Resource
-    private PersonsService personsService;
     @Resource
     private FacePhotosService facePhotosService;
     @Resource
@@ -123,7 +120,6 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
             }
         }
 
-        personsService.ensurePersonAndActivate(trimmedStudentNo, displayName);
         return resultPhotoId;
     }
 

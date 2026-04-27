@@ -4,7 +4,6 @@ import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.module.infra.service.file.FileService;
 import cn.iocoder.yudao.module.signin.dal.dataobject.facephotos.FacePhotosDO;
 import cn.iocoder.yudao.module.signin.framework.facealgorithm.FaceFeatureExtractClient;
-import cn.iocoder.yudao.module.signin.service.persons.PersonsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +17,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,8 +24,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FacePhotoFeatureSyncServiceImplTest {
 
-    @Mock
-    private PersonsService personsService;
     @Mock
     private FacePhotosService facePhotosService;
     @Mock
@@ -39,7 +35,7 @@ class FacePhotoFeatureSyncServiceImplTest {
     private FacePhotoFeatureSyncServiceImpl facePhotoFeatureSyncService;
 
     @Test
-    void syncFeatureFromUpload_createPath_callsAlgorithmAndActivate() throws Exception {
+    void syncFeatureFromUpload_createPath_callsAlgorithmAndPersist() throws Exception {
         String studentNo = "9210";
         Long classId = 100L;
         String displayName = "张三";
@@ -57,7 +53,6 @@ class FacePhotoFeatureSyncServiceImplTest {
         assertEquals("2001", photoId);
         verify(faceFeatureExtractClient).extractEmbedding(any(), eq("a.jpg"), eq("image/jpeg"));
         verify(facePhotosService).createFacePhotos(any(), eq("http://oss/1.jpg"), eq("a.jpg"), anyInt());
-        verify(personsService).ensurePersonAndActivate(eq(studentNo), eq(displayName));
     }
 
     @Test
@@ -73,7 +68,7 @@ class FacePhotoFeatureSyncServiceImplTest {
 
         facePhotoFeatureSyncService.syncFeatureFromUpload("88", 2L, null, null, null, file);
 
-        verify(personsService).ensurePersonAndActivate(eq("88"), isNull());
+        verify(facePhotosService).createFacePhotos(any(), eq("http://oss/y.jpg"), eq("a.jpg"), anyInt());
     }
 
     @Test

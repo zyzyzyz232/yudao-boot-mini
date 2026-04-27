@@ -38,7 +38,7 @@ import java.math.BigDecimal;
 public class FacePhotosDO extends BaseDO {
 
     /**
-     * 表主键列 {@code id}；可为 UUID，或与教学侧 {@code teaching_class_student.id} 同值（逻辑外键，常见为数字字符串）
+     * 表主键列 {@code id}；可与教学侧 {@code teaching_class_student.id} 同值（数字串），或由服务生成雪花数字串（兼容列类型为 BIGINT）
      */
     @TableId(value = "id", type = IdType.INPUT)
     private String photoId;

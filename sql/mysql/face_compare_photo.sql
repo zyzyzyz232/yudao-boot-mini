@@ -1,28 +1,5 @@
 -- ==========================================
--- 1. 创建签到人员基本信息表
--- ==========================================
-CREATE TABLE `signin_persons` (
-    `person_id` VARCHAR(50) NOT NULL COMMENT '人员唯一标识(可使用UUID)',
-    `name` VARCHAR(100) NOT NULL COMMENT '人员姓名',
-    `department` VARCHAR(100) DEFAULT NULL COMMENT '所属部门/组织',
-    `status` TINYINT(1) DEFAULT 1 COMMENT '状态：1-正常, 0-禁用',
-    
-    -- ▼▼▼ 芋道(Yudao)框架要求的基础通用字段 ▼▼▼
-    `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '创建者',
-    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '更新者',
-    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除(0-未删除，1-已删除)',
-    `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
-    -- ▲▲▲ 芋道(Yudao)框架要求的基础通用字段 ▲▲▲
-    
-    PRIMARY KEY (`person_id`),
-    INDEX `idx_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='签到系统-人员基本信息表';
-
-
--- ==========================================
--- 2. 创建签到人脸照片与特征数据表
+-- 创建签到人脸照片与特征数据表
 -- ==========================================
 CREATE TABLE `signin_face_photos` (
     `id` VARCHAR(50) NOT NULL COMMENT '主键；可与 teaching_class_student.id 同值（逻辑关联，VARCHAR 存数字串）；未绑定时仍可用 UUID',
