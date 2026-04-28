@@ -62,6 +62,7 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
         String trimmedStudentNo = StrUtil.trim(studentNo);
         String displayName = StrUtil.isNotBlank(name) ? StrUtil.trim(name) : null;
 
+        // 若指定 photoId，则要求 photoId 所属记录与当前 studentNo、classId 一致
         FacePhotosDO existingForUpdate = null;
         if (photoId != null) {
             existingForUpdate = facePhotosService.getFacePhotos(photoId);
@@ -99,6 +100,12 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
         } else {
             FacePhotosDO byClassStudent = facePhotosService.getFacePhotoForUpdateByStudentNoAndClassId(classId, trimmedStudentNo);
             if (byClassStudent != null) {
+                // 防御性校验：历史脏数据场景下，确保记录与 classId + studentNo 一致
+                if (!trimmedStudentNo.equals(byClassStudent.getStudentNo())
+                        || byClassStudent.getClassId() == null
+                        || !byClassStudent.getClassId().equals(classId)) {
+                    throw exception(FACE_PHOTO_PERSON_MISMATCH);
+                }
                 FacePhotosSaveReqVO updateReq = new FacePhotosSaveReqVO();
                 updateReq.setPhotoId(byClassStudent.getPhotoId());
                 updateReq.setStudentNo(trimmedStudentNo);
@@ -109,6 +116,15 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
                 facePhotosService.updateFacePhotos(updateReq, imageUrl, file.getOriginalFilename(), sizeKb);
                 resultPhotoId = byClassStudent.getPhotoId();
             } else {
+                // 未传 photoId 的新建场景：若该 studentNo 已存在记录但 classId 不同，则直接报错，避免跨班级错绑/重复建档
+                FacePhotosDO existingByStudentNo = facePhotosService.getFacePhotoForUpdateByStudentNo(trimmedStudentNo);
+                if (existingByStudentNo != null) {
+                    if (!trimmedStudentNo.equals(existingByStudentNo.getStudentNo())
+                            || existingByStudentNo.getClassId() == null
+                            || !existingByStudentNo.getClassId().equals(classId)) {
+                        throw exception(FACE_PHOTO_PERSON_MISMATCH);
+                    }
+                }
                 FacePhotosSaveReqVO createReq = new FacePhotosSaveReqVO();
                 createReq.setStudentNo(trimmedStudentNo);
                 createReq.setClassId(classId);

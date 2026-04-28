@@ -54,7 +54,7 @@ public class FacePhotosController {
 
     @PostMapping(value = "/sync-feature", consumes = "multipart/form-data")
     @Operation(summary = "同步人脸特征（上传照片、调算法、写特征）",
-            description = "数据仅存 signin_face_photos。必填：studentNo、classId、file；按 classId+studentNo upsert。name、photoId 等可选。teachingClassStudentId（班级学员关联 ID）选传，仅用于主键 id 与业务表对齐，不参与必填校验")
+            description = "数据仅存 signin_face_photos。必填：studentNo、classId、file；按 classId+studentNo upsert。photoId 选传：传则更新该记录（并校验其 studentNo、classId 与入参一致），不传则按 classId+studentNo 定位更新（若存在）或新建。teachingClassStudentId（班级学员关联 ID）选传，仅用于主键 id 与业务表对齐，不参与必填校验")
     @Parameter(name = "file", description = "照片文件", required = true,
             schema = @Schema(type = "string", format = "binary"))
     public CommonResult<FacePhotoSyncFeatureRespVO> syncFaceFeature(

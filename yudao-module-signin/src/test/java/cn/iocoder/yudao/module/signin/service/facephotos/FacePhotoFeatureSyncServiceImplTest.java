@@ -72,10 +72,10 @@ class FacePhotoFeatureSyncServiceImplTest {
     }
 
     @Test
-    void syncFeatureFromUpload_updatePath_mismatchedPerson_throws() {
+    void syncFeatureFromUpload_updatePath_mismatchedPerson_throws() throws Exception {
         String studentNo = "p-1";
         Long classId = 1L;
-        FacePhotosDO other = FacePhotosDO.builder().photoId(9001L).studentNo("other").build();
+        FacePhotosDO other = FacePhotosDO.builder().photoId(9001L).studentNo("other").classId(classId).build();
         when(facePhotosService.getFacePhotos(9001L)).thenReturn(other);
         MockMultipartFile file = new MockMultipartFile(
                 "file", "a.jpg", "image/jpeg", new byte[]{1, 2, 3});
@@ -104,6 +104,29 @@ class FacePhotoFeatureSyncServiceImplTest {
         assertEquals(3001L, photoId);
         verify(facePhotosService).updateFacePhotos(any(), eq("http://oss/2.jpg"), eq("b.jpg"), anyInt());
         verify(facePhotosService, never()).createFacePhotos(any(), anyString(), anyString(), anyInt());
+    }
+
+    @Test
+    void syncFeatureFromUpload_noPhotoId_classMismatchWithExistingStudent_throws() throws Exception {
+        String studentNo = "9210";
+        Long classId = 5L;
+        when(faceFeatureExtractClient.extractEmbedding(any(), anyString(), anyString()))
+                .thenReturn(new float[]{0.4f});
+        when(fileService.createFile(any(), anyString(), anyString(), anyString())).thenReturn("http://oss/x.jpg");
+        // 当前班级下不存在
+        when(facePhotosService.getFacePhotoForUpdateByStudentNoAndClassId(classId, studentNo)).thenReturn(null);
+        // 但该学员在其它班级已有记录
+        when(facePhotosService.getFacePhotoForUpdateByStudentNo(studentNo)).thenReturn(
+                FacePhotosDO.builder().photoId(8001L).studentNo(studentNo).classId(99L).build()
+        );
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "a.jpg", "image/jpeg", new byte[]{1});
+
+        assertThrows(ServiceException.class,
+                () -> facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, "N", null, null, file));
+        verify(facePhotosService, never()).createFacePhotos(any(), anyString(), anyString(), anyInt());
+        verify(facePhotosService, never()).updateFacePhotos(any(), anyString(), anyString(), anyInt());
     }
 
 }
