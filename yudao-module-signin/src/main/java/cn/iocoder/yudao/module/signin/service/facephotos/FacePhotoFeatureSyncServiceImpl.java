@@ -46,8 +46,8 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String syncFeatureFromUpload(String studentNo, Long classId, String name, String photoId,
-                                        Long teachingClassStudentId, MultipartFile file) throws Exception {
+    public Long syncFeatureFromUpload(String studentNo, Long classId, String name, Long photoId,
+                                      Long teachingClassStudentId, MultipartFile file) throws Exception {
         if (StrUtil.isBlank(studentNo)) {
             throw invalidParamException("学员编号不能为空");
         }
@@ -63,7 +63,7 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
         String displayName = StrUtil.isNotBlank(name) ? StrUtil.trim(name) : null;
 
         FacePhotosDO existingForUpdate = null;
-        if (StrUtil.isNotBlank(photoId)) {
+        if (photoId != null) {
             existingForUpdate = facePhotosService.getFacePhotos(photoId);
             if (existingForUpdate == null) {
                 throw exception(FACE_PHOTOS_NOT_EXISTS);
@@ -85,8 +85,8 @@ public class FacePhotoFeatureSyncServiceImpl implements FacePhotoFeatureSyncServ
                 "signin/face-photos", file.getContentType());
         int sizeKb = (int) (file.getSize() / 1024);
 
-        String resultPhotoId;
-        if (StrUtil.isNotBlank(photoId)) {
+        Long resultPhotoId;
+        if (photoId != null) {
             FacePhotosSaveReqVO updateReq = new FacePhotosSaveReqVO();
             updateReq.setPhotoId(photoId);
             updateReq.setStudentNo(trimmedStudentNo);

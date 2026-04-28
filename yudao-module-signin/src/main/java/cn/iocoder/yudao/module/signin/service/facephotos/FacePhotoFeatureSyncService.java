@@ -19,7 +19,7 @@ public interface FacePhotoFeatureSyncService {
      * @param file     照片
      * @return 人脸记录 photoId
      */
-    String syncFeatureFromUpload(String studentNo, Long classId, String name, String photoId,
-                                 Long teachingClassStudentId, MultipartFile file) throws Exception;
+    Long syncFeatureFromUpload(String studentNo, Long classId, String name, Long photoId,
+                               Long teachingClassStudentId, MultipartFile file) throws Exception;
 
 }

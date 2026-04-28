@@ -38,10 +38,10 @@ import java.math.BigDecimal;
 public class FacePhotosDO extends BaseDO {
 
     /**
-     * 表主键列 {@code id}；可与教学侧 {@code teaching_class_student.id} 同值（数字串），或由服务生成雪花数字串（兼容列类型为 BIGINT）
+     * 表主键列 {@code id}（BIGINT）；可与教学侧 {@code teaching_class_student.id} 同值，或由服务生成雪花 ID
      */
     @TableId(value = "id", type = IdType.INPUT)
-    private String photoId;
+    private Long photoId;
     /**
      * 学员编号（表字段 student_no）
      */

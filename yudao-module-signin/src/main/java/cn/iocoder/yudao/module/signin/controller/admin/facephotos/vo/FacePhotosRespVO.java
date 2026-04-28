@@ -13,9 +13,9 @@ import cn.idev.excel.annotation.*;
 @ExcelIgnoreUnannotated
 public class FacePhotosRespVO {
 
-    @Schema(description = "照片唯一标识(可使用UUID)", requiredMode = Schema.RequiredMode.REQUIRED, example = "5574")
-    @ExcelProperty("照片唯一标识(可使用UUID)")
-    private String photoId;
+    @Schema(description = "照片唯一标识(BIGINT)", requiredMode = Schema.RequiredMode.REQUIRED, example = "5574")
+    @ExcelProperty("照片唯一标识(BIGINT)")
+    private Long photoId;
 
     @Schema(description = "学员编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "9210")
     @ExcelProperty("学员编号")

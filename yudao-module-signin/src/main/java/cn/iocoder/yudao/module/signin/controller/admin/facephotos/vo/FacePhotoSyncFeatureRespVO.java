@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class FacePhotoSyncFeatureRespVO {
 
     @Schema(description = "人脸照片记录 ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String photoId;
+    private Long photoId;
 
 }

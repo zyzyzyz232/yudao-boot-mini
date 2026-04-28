@@ -16,7 +16,7 @@ public interface SigninFaceVerifyService {
      * @param photoId      人脸照片记录 ID
      * @param compareImage 现场拍摄的人脸图
      */
-    FaceVerifyAndSignRespVO verifyFaceAndSignIn(Long lessonId, String personId, String photoId,
+    FaceVerifyAndSignRespVO verifyFaceAndSignIn(Long lessonId, String personId, Long photoId,
                                                 MultipartFile compareImage) throws Exception;
 
 }

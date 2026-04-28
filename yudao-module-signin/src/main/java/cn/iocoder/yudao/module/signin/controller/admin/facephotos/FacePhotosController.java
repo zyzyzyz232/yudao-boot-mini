@@ -61,10 +61,10 @@ public class FacePhotosController {
             @RequestParam("studentNo") @NotEmpty(message = "学员编号不能为空") String studentNo,
             @RequestParam("classId") @NotNull(message = "班级编号不能为空") Long classId,
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "photoId", required = false) String photoId,
+            @RequestParam(value = "photoId", required = false) Long photoId,
             @RequestParam(value = "teachingClassStudentId", required = false) Long teachingClassStudentId,
             @RequestParam("file") @NotNull(message = "照片文件不能为空") MultipartFile file) throws Exception {
-        String outPhotoId = facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, name, photoId,
+        Long outPhotoId = facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, name, photoId,
                 teachingClassStudentId, file);
         return success(new FacePhotoSyncFeatureRespVO(outPhotoId));
     }
@@ -74,10 +74,10 @@ public class FacePhotosController {
             description = "必填：studentNo、classId。file 选传；不传时不走 OSS，image_url 置空串、image_size_kb 为 0，可仅写入 faceVector 等字段。teachingClassStudentId 选传，仅用于将表主键 id 与班级学员关联表对齐")
     @Parameter(name = "file", description = "照片文件（选传）",
             schema = @Schema(type = "string", format = "binary"))
-    public CommonResult<String> createFacePhotos(
+    public CommonResult<Long> createFacePhotos(
             @RequestParam("studentNo") @NotEmpty(message = "学员编号不能为空") String studentNo,
             @RequestParam("classId") @NotNull(message = "班级编号不能为空") Long classId,
-            @RequestParam(value = "photoId", required = false) String photoId,
+            @RequestParam(value = "photoId", required = false) Long photoId,
             @RequestParam(value = "teachingClassStudentId", required = false) Long teachingClassStudentId,
             @RequestParam(value = "isPrimary", required = false) Boolean isPrimary,
             @RequestParam(value = "faceVector", required = false) String faceVector,
@@ -157,7 +157,7 @@ public class FacePhotosController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除签到系统-人脸照片特征")
     @Parameter(name = "id", description = "编号", required = true)
-    public CommonResult<Boolean> deleteFacePhotos(@RequestParam("id") String id) {
+    public CommonResult<Boolean> deleteFacePhotos(@RequestParam("id") Long id) {
         facePhotosService.deleteFacePhotos(id);
         return success(true);
     }
@@ -165,15 +165,15 @@ public class FacePhotosController {
     @DeleteMapping("/delete-list")
     @Operation(summary = "批量删除签到系统-人脸照片特征")
     @Parameter(name = "ids", description = "编号列表", required = true)
-    public CommonResult<Boolean> deleteFacePhotosList(@RequestParam("ids") List<String> ids) {
+    public CommonResult<Boolean> deleteFacePhotosList(@RequestParam("ids") List<Long> ids) {
         facePhotosService.deleteFacePhotosListByIds(ids);
         return success(true);
     }
 
     @GetMapping("/get")
     @Operation(summary = "获得签到系统-人脸照片特征")
-    @Parameter(name = "id", description = "表主键 id，与分页/创建返回的 photoId 一致（可为与 teaching_class_student.id 同值的数字串，或 UUID；勿用学员号代替，学员号请用 get-by-student-no）", required = true)
-    public CommonResult<FacePhotosRespVO> getFacePhotos(@RequestParam("id") String id) {
+    @Parameter(name = "id", description = "表主键 id（BIGINT），与分页/创建返回的 photoId 一致；勿用学员号代替，学员号请用 get-by-student-no", required = true)
+    public CommonResult<FacePhotosRespVO> getFacePhotos(@RequestParam("id") Long id) {
         FacePhotosDO facePhotos = facePhotosService.getFacePhotos(id);
         if (facePhotos == null) {
             throw exception(FACE_PHOTOS_NOT_EXISTS);

@@ -23,8 +23,8 @@ public interface FacePhotosService {
      * @param sizeKb      文件大小（KB）
      * @return 编号
      */
-    String createFacePhotos(@Valid FacePhotosSaveReqVO createReqVO,
-                            String imageUrl, String fileName, int sizeKb);
+    Long createFacePhotos(@Valid FacePhotosSaveReqVO createReqVO,
+                          String imageUrl, String fileName, int sizeKb);
 
     /**
      * 更新签到系统-人脸照片特征
@@ -42,14 +42,14 @@ public interface FacePhotosService {
      *
      * @param id 编号
      */
-    void deleteFacePhotos(String id);
+    void deleteFacePhotos(Long id);
 
     /**
     * 批量删除签到系统-人脸照片特征
     *
     * @param ids 编号
     */
-    void deleteFacePhotosListByIds(List<String> ids);
+    void deleteFacePhotosListByIds(List<Long> ids);
 
     /**
      * 获得签到系统-人脸照片特征
@@ -57,7 +57,7 @@ public interface FacePhotosService {
      * @param id 编号
      * @return 签到系统-人脸照片特征
      */
-    FacePhotosDO getFacePhotos(String id);
+    FacePhotosDO getFacePhotos(Long id);
 
     /**
      * 按学员编号解析用于「仅 studentNo 更新」接口的目标记录：优先主图，否则取更新时间最新的一条

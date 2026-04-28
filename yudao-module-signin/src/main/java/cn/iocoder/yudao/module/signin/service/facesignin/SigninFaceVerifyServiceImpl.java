@@ -52,7 +52,7 @@ public class SigninFaceVerifyServiceImpl implements SigninFaceVerifyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FaceVerifyAndSignRespVO verifyFaceAndSignIn(Long lessonId, String personId, String photoId,
+    public FaceVerifyAndSignRespVO verifyFaceAndSignIn(Long lessonId, String personId, Long photoId,
                                                        MultipartFile compareImage) throws Exception {
         if (lessonId == null) {
             throw invalidParamException("课堂编号不能为空");
@@ -60,7 +60,7 @@ public class SigninFaceVerifyServiceImpl implements SigninFaceVerifyService {
         if (StrUtil.isBlank(personId)) {
             throw invalidParamException("学员编号不能为空");
         }
-        if (StrUtil.isBlank(photoId)) {
+        if (photoId == null) {
             throw invalidParamException("照片ID不能为空");
         }
         if (compareImage == null || compareImage.isEmpty()) {

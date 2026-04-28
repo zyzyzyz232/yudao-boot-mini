@@ -32,13 +32,12 @@ public class FacePhotosServiceImpl implements FacePhotosService {
     private FacePhotosMapper facePhotosMapper;
 
     @Override
-    public String createFacePhotos(@Valid FacePhotosSaveReqVO createReqVO,
-                                   String imageUrl, String fileName, int sizeKb) {
+    public Long createFacePhotos(@Valid FacePhotosSaveReqVO createReqVO,
+                                 String imageUrl, String fileName, int sizeKb) {
         if (createReqVO.getTeachingClassStudentId() != null) {
-            createReqVO.setPhotoId(String.valueOf(createReqVO.getTeachingClassStudentId()));
-        } else if (StrUtil.isBlank(createReqVO.getPhotoId())) {
-            // 使用雪花数字串：兼容库表 id 为 BIGINT；若为 VARCHAR 亦可存
-            createReqVO.setPhotoId(IdWorker.getIdStr());
+            createReqVO.setPhotoId(createReqVO.getTeachingClassStudentId());
+        } else if (createReqVO.getPhotoId() == null) {
+            createReqVO.setPhotoId(IdWorker.getId());
         }
 
         // 组装 DO，imageUrl 由 Controller 通过 FileService 上传后传入
@@ -66,24 +65,24 @@ public class FacePhotosServiceImpl implements FacePhotosService {
     }
 
     @Override
-    public void deleteFacePhotos(String id) {
+    public void deleteFacePhotos(Long id) {
         validateFacePhotosExists(id);
         facePhotosMapper.deleteById(id);
     }
 
     @Override
-    public void deleteFacePhotosListByIds(List<String> ids) {
+    public void deleteFacePhotosListByIds(List<Long> ids) {
         facePhotosMapper.deleteByIds(ids);
     }
 
-    private void validateFacePhotosExists(String id) {
+    private void validateFacePhotosExists(Long id) {
         if (facePhotosMapper.selectById(id) == null) {
             throw exception(FACE_PHOTOS_NOT_EXISTS);
         }
     }
 
     @Override
-    public FacePhotosDO getFacePhotos(String id) {
+    public FacePhotosDO getFacePhotos(Long id) {
         return facePhotosMapper.selectById(id);
     }
 

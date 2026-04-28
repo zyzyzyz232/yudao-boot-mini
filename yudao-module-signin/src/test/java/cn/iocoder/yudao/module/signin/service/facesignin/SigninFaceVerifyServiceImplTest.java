@@ -42,8 +42,8 @@ class SigninFaceVerifyServiceImplTest {
 
     @Test
     void verify_samePerson_marksSignedIn() throws Exception {
-        when(facePhotosService.getFacePhotos("ph")).thenReturn(FacePhotosDO.builder()
-                .photoId("ph")
+        when(facePhotosService.getFacePhotos(1001L)).thenReturn(FacePhotosDO.builder()
+                .photoId(1001L)
                 .studentNo("p1")
                 .imageUrl("http://local/file.jpg")
                 .imageFormat("jpg")
@@ -59,7 +59,7 @@ class SigninFaceVerifyServiceImplTest {
         MockMultipartFile compare = new MockMultipartFile(
                 "compareImage", "b.jpg", "image/jpeg", new byte[]{3, 4, 5});
 
-        FaceVerifyAndSignRespVO resp = signinFaceVerifyService.verifyFaceAndSignIn(100L, "p1", "ph", compare);
+        FaceVerifyAndSignRespVO resp = signinFaceVerifyService.verifyFaceAndSignIn(100L, "p1", 1001L, compare);
 
         assertTrue(resp.getIsSamePerson());
         assertTrue(resp.getSignedIn());
@@ -68,8 +68,8 @@ class SigninFaceVerifyServiceImplTest {
 
     @Test
     void verify_notSamePerson_doesNotUpdateRecord() throws Exception {
-        when(facePhotosService.getFacePhotos("ph")).thenReturn(FacePhotosDO.builder()
-                .photoId("ph")
+        when(facePhotosService.getFacePhotos(1002L)).thenReturn(FacePhotosDO.builder()
+                .photoId(1002L)
                 .studentNo("p1")
                 .imageUrl("http://local/file.jpg")
                 .imageFormat("png")
@@ -85,7 +85,7 @@ class SigninFaceVerifyServiceImplTest {
         MockMultipartFile compare = new MockMultipartFile(
                 "compareImage", "b.png", "image/png", new byte[]{9});
 
-        FaceVerifyAndSignRespVO resp = signinFaceVerifyService.verifyFaceAndSignIn(100L, "p1", "ph", compare);
+        FaceVerifyAndSignRespVO resp = signinFaceVerifyService.verifyFaceAndSignIn(100L, "p1", 1002L, compare);
 
         assertFalse(resp.getIsSamePerson());
         assertFalse(resp.getSignedIn());
@@ -94,19 +94,19 @@ class SigninFaceVerifyServiceImplTest {
 
     @Test
     void verify_faceNotExists_throws() {
-        when(facePhotosService.getFacePhotos("missing")).thenReturn(null);
+        when(facePhotosService.getFacePhotos(9999L)).thenReturn(null);
         MockMultipartFile compare = new MockMultipartFile(
                 "compareImage", "b.jpg", "image/jpeg", new byte[]{1});
 
         assertThrows(ServiceException.class,
-                () -> signinFaceVerifyService.verifyFaceAndSignIn(1L, "p1", "missing", compare));
+                () -> signinFaceVerifyService.verifyFaceAndSignIn(1L, "p1", 9999L, compare));
         verify(faceVerifyClient, never()).verify(any(), anyString(), any(), any(), anyString(), any());
     }
 
     @Test
     void verify_personMismatch_throws() throws Exception {
-        when(facePhotosService.getFacePhotos("ph")).thenReturn(FacePhotosDO.builder()
-                .photoId("ph")
+        when(facePhotosService.getFacePhotos(1003L)).thenReturn(FacePhotosDO.builder()
+                .photoId(1003L)
                 .studentNo("other")
                 .imageUrl("http://x")
                 .build());
@@ -114,7 +114,7 @@ class SigninFaceVerifyServiceImplTest {
                 "compareImage", "b.jpg", "image/jpeg", new byte[]{1});
 
         assertThrows(ServiceException.class,
-                () -> signinFaceVerifyService.verifyFaceAndSignIn(1L, "p1", "ph", compare));
+                () -> signinFaceVerifyService.verifyFaceAndSignIn(1L, "p1", 1003L, compare));
         verify(fileService, never()).getFileContentByUrl(anyString());
     }
 

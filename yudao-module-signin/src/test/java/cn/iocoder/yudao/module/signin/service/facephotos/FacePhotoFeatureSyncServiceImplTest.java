@@ -43,14 +43,14 @@ class FacePhotoFeatureSyncServiceImplTest {
                 .thenReturn(new float[]{0.1f, 0.2f});
         when(fileService.createFile(any(), anyString(), anyString(), anyString())).thenReturn("http://oss/1.jpg");
         when(facePhotosService.getFacePhotoForUpdateByStudentNoAndClassId(classId, studentNo)).thenReturn(null);
-        when(facePhotosService.createFacePhotos(any(), anyString(), anyString(), anyInt())).thenReturn("2001");
+        when(facePhotosService.createFacePhotos(any(), anyString(), anyString(), anyInt())).thenReturn(2001L);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "a.jpg", "image/jpeg", new byte[]{1, 2, 3});
 
-        String photoId = facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, displayName, null, null, file);
+        Long photoId = facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, displayName, null, null, file);
 
-        assertEquals("2001", photoId);
+        assertEquals(2001L, photoId);
         verify(faceFeatureExtractClient).extractEmbedding(any(), eq("a.jpg"), eq("image/jpeg"));
         verify(facePhotosService).createFacePhotos(any(), eq("http://oss/1.jpg"), eq("a.jpg"), anyInt());
     }
@@ -61,7 +61,7 @@ class FacePhotoFeatureSyncServiceImplTest {
                 .thenReturn(new float[]{0.2f});
         when(fileService.createFile(any(), anyString(), anyString(), anyString())).thenReturn("http://oss/y.jpg");
         when(facePhotosService.getFacePhotoForUpdateByStudentNoAndClassId(2L, "88")).thenReturn(null);
-        when(facePhotosService.createFacePhotos(any(), anyString(), anyString(), anyInt())).thenReturn("7");
+        when(facePhotosService.createFacePhotos(any(), anyString(), anyString(), anyInt())).thenReturn(7L);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "a.jpg", "image/jpeg", new byte[]{1});
@@ -75,13 +75,13 @@ class FacePhotoFeatureSyncServiceImplTest {
     void syncFeatureFromUpload_updatePath_mismatchedPerson_throws() {
         String studentNo = "p-1";
         Long classId = 1L;
-        FacePhotosDO other = FacePhotosDO.builder().photoId("ph").studentNo("other").build();
-        when(facePhotosService.getFacePhotos("ph")).thenReturn(other);
+        FacePhotosDO other = FacePhotosDO.builder().photoId(9001L).studentNo("other").build();
+        when(facePhotosService.getFacePhotos(9001L)).thenReturn(other);
         MockMultipartFile file = new MockMultipartFile(
                 "file", "a.jpg", "image/jpeg", new byte[]{1, 2, 3});
 
         assertThrows(ServiceException.class,
-                () -> facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, "N", "ph", null, file));
+                () -> facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, "N", 9001L, null, file));
         verify(faceFeatureExtractClient, never()).extractEmbedding(any(), anyString(), anyString());
     }
 
@@ -93,15 +93,15 @@ class FacePhotoFeatureSyncServiceImplTest {
         when(faceFeatureExtractClient.extractEmbedding(any(), anyString(), anyString()))
                 .thenReturn(new float[]{0.3f});
         when(fileService.createFile(any(), anyString(), anyString(), anyString())).thenReturn("http://oss/2.jpg");
-        FacePhotosDO existing = FacePhotosDO.builder().photoId("old-1").studentNo(studentNo).classId(classId).isPrimary(true).build();
+        FacePhotosDO existing = FacePhotosDO.builder().photoId(3001L).studentNo(studentNo).classId(classId).isPrimary(true).build();
         when(facePhotosService.getFacePhotoForUpdateByStudentNoAndClassId(classId, studentNo)).thenReturn(existing);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "b.jpg", "image/jpeg", new byte[]{9});
 
-        String photoId = facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, displayName, null, null, file);
+        Long photoId = facePhotoFeatureSyncService.syncFeatureFromUpload(studentNo, classId, displayName, null, null, file);
 
-        assertEquals("old-1", photoId);
+        assertEquals(3001L, photoId);
         verify(facePhotosService).updateFacePhotos(any(), eq("http://oss/2.jpg"), eq("b.jpg"), anyInt());
         verify(facePhotosService, never()).createFacePhotos(any(), anyString(), anyString(), anyInt());
     }

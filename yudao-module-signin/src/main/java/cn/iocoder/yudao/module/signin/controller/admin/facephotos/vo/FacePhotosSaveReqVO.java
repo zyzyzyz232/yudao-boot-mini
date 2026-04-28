@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 @Data
 public class FacePhotosSaveReqVO {
 
-    @Schema(description = "照片主键 id（表 id）；不传时若传了 teachingClassStudentId 则使用其字符串形式，否则由服务生成雪花数字串（兼容 id 列为 BIGINT）", example = "5574")
-    private String photoId;
+    @Schema(description = "照片主键 id（BIGINT）；不传时若传了 teachingClassStudentId 则使用其值，否则由服务生成雪花 ID", example = "5574")
+    private Long photoId;
 
     @Schema(description = "班级学员关联 ID（对应库表 class_student / teaching_class_student 等业务主键，仅用于落库关联主键 id，选传，不参与业务必填校验）", example = "1001")
     private Long teachingClassStudentId;

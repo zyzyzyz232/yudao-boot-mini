@@ -54,7 +54,7 @@ public class RecordController {
     public CommonResult<FaceVerifyAndSignRespVO> verifyFaceAndSignIn(
             @RequestParam("lessonId") @NotNull(message = "课堂编号不能为空") Long lessonId,
             @RequestParam("personId") @NotEmpty(message = "学员编号不能为空") String personId,
-            @RequestParam("photoId") @NotEmpty(message = "照片ID不能为空") String photoId,
+            @RequestParam("photoId") @NotNull(message = "照片ID不能为空") Long photoId,
             @RequestParam("compareImage") MultipartFile compareImage) throws Exception {
         return success(signinFaceVerifyService.verifyFaceAndSignIn(lessonId, personId, photoId, compareImage));
     }
